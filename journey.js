@@ -35,6 +35,11 @@ const sourceTagColors = {
   CCS: "ccs",
   RTT: "rtt"
 };
+const sourceTagLabels = {
+  PH: "Phone",
+  LTR: "Letter",
+  EML: "Email"
+};
 const roleEvents = roleNames.map(() => Array.from({ length: stageTotal + 1 }, () => []));
 const responsibilityByStage = Array(stageTotal + 1).fill(null);
 const analysisLayerDefinitions = [
@@ -256,7 +261,7 @@ function appendSourceTags(container, labels) {
   for (const text of labels) {
     const tag = document.createElement("span");
     tag.className = `source-tag--${sourceTagColors[text] || "neutral"}`;
-    tag.textContent = text;
+    tag.textContent = sourceTagLabels[text] || text;
     tags.append(tag);
   }
   container.append(tags);
@@ -497,7 +502,17 @@ function renderMatrix() {
     const mark = document.createElement("span");
     mark.className = "lane-mark";
     mark.setAttribute("aria-hidden", "true");
-    mark.textContent = role.slice(0, 1);
+    const userIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    userIcon.setAttribute("viewBox", "0 0 32 32");
+    userIcon.setAttribute("focusable", "false");
+    const head = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    head.setAttribute("cx", "16");
+    head.setAttribute("cy", "10");
+    head.setAttribute("r", "5");
+    const body = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    body.setAttribute("d", "M4 28c.5-6 4.9-10 12-10s11.5 4 12 10H4Z");
+    userIcon.append(head, body);
+    mark.append(userIcon);
     const name = document.createElement("span");
     name.className = "lane-name";
     name.textContent = role;

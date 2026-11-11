@@ -521,15 +521,25 @@ function renderMatrix() {
     }
   });
 
-  drawLinks();
+  scheduleLinks();
+}
+
+// Measure cards in matrix coordinates so scrolling cannot skew connector paths.
+function getMatrixOffset(element) {
+  let left = 0;
+  let top = 0;
+
+  for (let current = element; current && current !== matrix; current = current.offsetParent) {
+    left += current.offsetLeft;
+    top += current.offsetTop;
+  }
+
+  return { left, top };
 }
 
 // Connect each stage's events to the nearest event in the next populated stage.
 function drawLinks() {
   if (matrix.hidden) return;
-  const matrixRect = matrix.getBoundingClientRect();
-  const scaleX = matrixRect.width / matrix.offsetWidth || 1;
-  const scaleY = matrixRect.height / matrix.offsetHeight || 1;
   linksSvg.setAttribute("width", String(matrix.offsetWidth));
   linksSvg.setAttribute("height", String(matrix.offsetHeight));
   linksSvg.setAttribute("viewBox", `0 0 ${matrix.offsetWidth} ${matrix.offsetHeight}`);
@@ -544,17 +554,17 @@ function drawLinks() {
     const nextEvents = to.filter((event) => Number(event.dataset.stage) === nextStage);
 
     for (const source of from) {
-      const sourceRect = source.getBoundingClientRect();
-      const sourceY = (sourceRect.top + sourceRect.height / 2 - matrixRect.top) / scaleY;
-      const sourceX = (sourceRect.right - matrixRect.left) / scaleX;
+      const sourcePosition = getMatrixOffset(source);
+      const sourceX = sourcePosition.left + source.offsetWidth;
+      const sourceY = sourcePosition.top + source.offsetHeight / 2;
       const target = nextEvents.reduce((nearest, candidate) => {
-        const rect = candidate.getBoundingClientRect();
-        const y = (rect.top + rect.height / 2 - matrixRect.top) / scaleY;
+        const position = getMatrixOffset(candidate);
+        const y = position.top + candidate.offsetHeight / 2;
         return Math.abs(y - sourceY) < nearest.distance ? { element: candidate, distance: Math.abs(y - sourceY) } : nearest;
       }, { element: nextEvents[0], distance: Infinity }).element;
-      const targetRect = target.getBoundingClientRect();
-      const targetY = (targetRect.top + targetRect.height / 2 - matrixRect.top) / scaleY;
-      const targetX = (targetRect.left - matrixRect.left) / scaleX;
+      const targetPosition = getMatrixOffset(target);
+      const targetX = targetPosition.left;
+      const targetY = targetPosition.top + target.offsetHeight / 2;
       const curve = Math.max(18, (targetX - sourceX) * .45);
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", `M ${sourceX} ${sourceY} C ${sourceX + curve} ${sourceY}, ${targetX - curve} ${targetY}, ${targetX} ${targetY}`);

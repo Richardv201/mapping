@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eaf4fb">
+  <title>Northumbria referral journey</title>
+  <link rel="stylesheet" href="journey.css?v=3">
+</head>
+<body>
+  <main class="journey-app" id="journey-app">
+    <section class="intro" id="top" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Interactive view of the referral process</p>
+        <h1 id="page-title">Referral Pathway Map</h1>
+        <p class="intro-copy">Follow the patient's journey across the teams involved in their care.</p>
+      </div>
+      <div class="journey-progress" aria-live="polite">
+        <span class="progress-label" id="progress-label">Ready to begin</span>
+        <span class="progress-number" id="progress-number">00 <small>/ 10</small></span>
+        <div class="progress-track" role="progressbar" aria-label="Journey progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+          <span id="progress-bar"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="journey-controls" aria-label="Journey controls">
+      <div class="action-group">
+        <button class="action-button back-button" id="previous-button" type="button" disabled><span aria-hidden="true">←</span> Previous</button>
+        <button class="action-button advance-button" id="next-button" type="button">Begin journey <span aria-hidden="true">→</span></button>
+        <button class="icon-button" id="reset-button" type="button" aria-label="Reset journey" title="Reset journey">↺</button>
+      </div>
+      <div class="zoom-controls" aria-label="Canvas scale">
+        <button class="icon-button" id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button>
+        <span id="zoom-label">100%</span>
+        <button class="icon-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
+      </div>
+    </section>
+    <nav class="stage-nav" id="stage-nav" aria-label="Go to journey stage"></nav>
+
+    <section class="journey-board" aria-labelledby="board-heading">
+      <div class="board-heading">
+        <div>
+          <p class="eyebrow">Live pathway</p>
+          <h2 id="board-heading">Journey map</h2>
+        </div>
+        <p class="board-status" id="board-status" role="status">Select Begin journey to add the first stage.</p>
+      </div>
+      <div class="board-scroll" id="board-scroll" tabindex="0" aria-label="Scrollable patient journey map">
+        <div class="empty-board" id="empty-board">
+          <span class="empty-index">01—10</span>
+          <span class="empty-rule" aria-hidden="true"></span>
+          <p>The pathway will take shape here.</p>
+        </div>
+        <div class="journey-matrix" id="journey-matrix" hidden>
+          <svg class="journey-links" id="journey-links" aria-hidden="true"></svg>
+          <div class="matrix-grid" id="matrix-grid"></div>
+        </div>
+      </div>
+      <footer class="board-legend">
+        <span><i class="legend-dot touchpoint" aria-hidden="true"></i>Activity</span>
+        <span><i class="legend-dot failure" aria-hidden="true"></i>Friction point</span>
+        <span class="legend-note">Select an item to read more</span>
+      </footer>
+    </section>
+    <p class="source-note">Journey content derived from the Northumbria regional referral map.</p>
+  </main>
+
+  <script src="journey.js" defer></script>
+</body>
+</html>
